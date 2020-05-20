@@ -1,0 +1,26 @@
+{% extends 'home_view/index.html' %}
+{% load crispy_forms_tags %}
+{% block main %}
+<div class="row" style="padding-top: 100px;">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+              <h3 class="card-title typewriter"><b>Sign Up</b></h3>
+              <hr>
+              <form style="padding-top:15px" method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="row">
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                  </div>
+                  <div class="col-md-4"></div>
+                </div>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
