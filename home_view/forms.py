@@ -8,6 +8,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(required=True,min_length=6,widget=forms.PasswordInput(attrs={'placeholder':'Password'}),label="Password",error_messages={'required':'Please Enter the Password!'})
 
 class SignupForm(forms.Form):
+    name = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder':'Name'}),label="User Name",error_messages={'required':'Please Enter Your Name'})
     email = forms.EmailField(required=True,help_text='abcd@gmail.com',widget=forms.EmailInput(attrs={'placeholder':'Email'}),label="Email",error_messages={'required':'Please Enter the Email!'})
     password = forms.CharField(required=True,min_length=6,widget=forms.PasswordInput(attrs={'placeholder':'Password'}),label="Password",validators=[password_pattern],error_messages={'required':'Please Enter the Password!','min_length':'Password should contain at least 6 characters.'})
     rePassword = forms.CharField(required=True,widget=forms.PasswordInput(attrs={'placeholder':'Re Enter Password'}), label="Re Enter Password")
