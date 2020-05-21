@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'home_view.apps.HomeViewConfig'
+    'home_view.apps.HomeViewConfig',
+    'dashboard.apps.DashboardConfig'
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'save_passwords.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'home_view/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'home_view/templates'),os.path.join(BASE_DIR, 'dashboard/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

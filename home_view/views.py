@@ -29,6 +29,7 @@ def index(response):
             is_equal = bcrypt.checkpw(password.encode(), user_data['password'])
             if(is_equal):
                 print("Login Success!")
+                return redirect('/dashboard')
             else:
                 print('Credentials Invalid!')
         else:  

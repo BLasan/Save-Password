@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from home_view import views
+from dashboard import views as dashboard_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="index"),
-    path('signup/',views.signup, name="signup")
+    path('signup/',views.signup, name="signup"),
+    path('dashboard/',dashboard_views.index, name="index")
 ]
