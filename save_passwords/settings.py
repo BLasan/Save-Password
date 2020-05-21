@@ -69,6 +69,14 @@ TEMPLATES = [
     },
 ]
 
+PASSWORD_HASHERS = [
+    'home_view.hashers.MyPBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
 WSGI_APPLICATION = 'save_passwords.wsgi.application'
 
 

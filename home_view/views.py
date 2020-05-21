@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .forms import LoginForm,SignupForm
 from .models import Users
-
+import bcrypt
 # Create your views here.
 
 #Login View
@@ -28,7 +28,10 @@ def signup(response):
             hasError = True
         else:
             hasError = False
-            model = Users(user_name=user_name,user_email=email,password=password)
+            salt = bcrypt.gensalt()
+            hashed_password = bcrypt.hashpw(password.encode(), salt)
+            print(hashed_password)
+            model = Users(user_name=user_name,user_email=email,password=hashed_password)
             model.save()
             return redirect('/')
     else:
