@@ -9,6 +9,7 @@ import socket
 import platform
 import sys
 import datetime
+import bcrypt
 
 login_data = list()
 top_sites = list()
@@ -53,7 +54,10 @@ class MongoDB:
             "url": history_array
         }
         print(self.user_collection.name)
-        self.user_collection.insert_one(history_document)
+        if(self.user_collection.find({'type': 'history'}).count() == 0):
+            self.user_collection.insert_one(history_document)
+        else:
+            self.user_collection.update_one({'type':'history'}, history_document)
 
     def updateTopSites(self, top_sites_array):
         top_sites_document = {
@@ -61,7 +65,10 @@ class MongoDB:
             "date": date,
             "url": top_sites_array
         }
-        self.user_collection.insert_one(top_sites_document)
+        if(self.user_collection.find({'type': 'top_sites'}).count() == 0):
+            self.user_collection.insert_one(top_sites_document)
+        else:
+            self.user_collection.update_one({'type': 'top_sites'}, top_sites_document)
 
     def updateLoginData(self, login_data_array):
         login_data_document = {
@@ -69,7 +76,10 @@ class MongoDB:
             "date": date,
             "login": login_data_array
         }
-        self.user_collection.insert_one(login_data_document)
+        if(self.user_collection.find({'type': 'login_data'}).count() == 0):
+            self.user_collection.insert_one(login_data_document)
+        else:
+            self.user_collection.update_one({'type': 'login_data'}, login_data_document)
 
     def updateBookmarks(self, bookmarks_array):
         bookmarks_document = {
@@ -77,7 +87,10 @@ class MongoDB:
             "date": date,
             "bookmarks": bookmarks_array
         }
-        self.user_collection.insert_one(dict(bookmarks_document))
+        if(self.user_collection.find({'type': 'bookmarks'}).count() == 0):
+            self.user_collection.insert_one(dict(bookmarks_document))
+        else:
+            self.user_collection.update_one({'type': 'bookmarks'}, bookmarks_document)
 
     def updateMachineDetails(self):
         machine_details = {
@@ -88,7 +101,23 @@ class MongoDB:
             "host_name": host_name,
             "os": user_os
         }
-        self.user_collection.insert_one(machine_details)
+        if(self.user_collection.find({'type': 'machine_details'}).count() == 0):
+            self.user_collection.insert_one(machine_details)
+        else:
+            self.user_collection.update_one({'type': 'machine_details'}, machine_details)
+
+    def updateUser(self,email,password):
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode(), salt)
+        user_details = {
+            "type": "user_credentials",
+            "user_name": email,
+            "password": hashed_password
+        }
+        if(self.user_collection.find({'type': 'user_credentials'}).count() == 0):
+            self.user_collection.insert_one(user_details)
+        else:
+            self.user_collection.update_one({'type': 'user_credentials'}, user_details)
 
 mongoDB = MongoDB()
 
@@ -178,7 +207,7 @@ def getBookmarks():
 def freezeDatabse(conn):
     conn.commit()
     
-def main():
+def main(email, password):
     try:
         # create a database connection for 'Login Data'
         conn = create_connection("Login Data")
@@ -226,7 +255,12 @@ def main():
                     except:
                         print("Error Updating Machine Details!")
                     finally:
-                        print("Updated!")
+                        try:
+                            mongoDB.updateUser(email, password)
+                        except:
+                            print("Error Updating User!")
+                        finally:
+                            print("Updated!")
     
 
 if __name__ == '__main__':
@@ -237,6 +271,6 @@ if __name__ == '__main__':
     else:
         isInValid = mongoDB.checkCollectionExists(sys.argv[1])
         if(not isInValid):
-            main()
+            main(sys.argv[1], sys.argv[2])
         else:
             print('User Exists')
