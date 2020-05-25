@@ -2,6 +2,7 @@ import bcrypt
 from django.shortcuts import render, redirect
 from .forms import LoginForm, SignupForm
 from .models import Users
+import requests
 # Create your views here.
 
 #Login View
@@ -29,6 +30,7 @@ def index(response):
             is_equal = bcrypt.checkpw(password.encode(), user_data['password'])
             if(is_equal):
                 print("Login Success!")
+                requests.session['email'] = email
                 return redirect('/dashboard')
             else:
                 print('Credentials Invalid!')

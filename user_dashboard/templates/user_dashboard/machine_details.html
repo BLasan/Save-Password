@@ -1,0 +1,48 @@
+{% extends 'user_dashboard/index.html' %}
+{% block main %}
+
+<div class="row" style="padding-top: 100px;">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h2 class="card-title" align="center">Machine Details</h2>
+                <div class="row" style="padding-top: 30px;">
+                    <div class="col-md-6">
+                        <p><b>User: </b></p>
+                    </div>
+                    <div class="col-md-6">
+                        {{ machine_data.user }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><b>MAC: </b></p>
+                    </div>
+                    <div class="col-md-6">
+                        {{ machine_data.mac }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><b>Host Name: </b></p>
+                    </div>
+                    <div class="col-md-6">
+                        {{ machine_data.host_name }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><b>OS: </b></p>
+                    </div>
+                    <div class="col-md-6">
+                        {{ machine_data.os }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+{% endblock %}
