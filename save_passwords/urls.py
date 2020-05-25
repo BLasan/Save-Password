@@ -23,5 +23,7 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('signup/',views.signup, name="signup"),
     path('dashboard/',dashboard_views.index, name="index"),
-    path('machine_details/', dashboard_views.machine_details, name="machine_details")
+    path('machine_details/', dashboard_views.machine_details, name="machine_details"),
+    path('history/', dashboard_views.history, name='history'),
+    path('login_data/', dashboard_views.login_data, name='login_data')
 ]

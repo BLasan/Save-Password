@@ -1,0 +1,41 @@
+{% extends 'user_dashboard/index.html' %}
+{% block main %}
+
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <p> <b> Last Tracked : </b> {{ history_array.date }} </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-12">
+        <table class="table table-hover table-responsive">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">URL</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for history in history_array.url %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ history.1 }}</td>
+                <td>{{ history.0 }}</td>
+                <td>{{ history.2 }}</td>
+                <td>{{ history.3 }}</td>
+              </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

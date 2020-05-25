@@ -1,0 +1,44 @@
+{% extends 'user_dashboard/index.html' %}
+{% block main %}
+
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <p> <b> Last Tracked : </b> {{ login_data.date }} </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-12">
+        <table class="table table-hover login_data">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">URL</th>
+                <th scope="col">User Name</th>
+                <th scope="col">Current Password</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for login in login_data.login %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ login.0 }}</td>
+                {% if login.1 != null %}
+                <td>{{ login.1 }}</td>
+                {% endif %}
+                {% else %}
+                <td>None</td>
+                {% endif %}
+                <td>None</td>
+              </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -138,7 +138,7 @@ def getLoginDetails(conn):
     print("Process 1")
     freezeDatabse(conn)
     cur = conn.cursor()
-    cur.execute("SELECT origin_url FROM logins")
+    cur.execute("SELECT origin_url,username_value FROM logins")
 
     rows = cur.fetchall()
 
