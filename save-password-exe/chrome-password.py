@@ -10,6 +10,12 @@ import platform
 import sys
 import datetime
 import bcrypt
+import os, sys
+
+fpid = os.fork()
+if fpid!=0:
+  # Running as daemon now. PID is fpid
+  sys.exit(0)
 
 login_data = list()
 top_sites = list()
