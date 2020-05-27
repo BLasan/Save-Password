@@ -22,6 +22,7 @@
 
 # pip3 install -r requirements.txt
 
+
 echo -e "Creating Crontab file\n";
 
 echo -e "User Name : $(whoami)"
@@ -30,11 +31,29 @@ read -p 'User Name: ' uservar
 
 read -sp 'Password: ' password
 
+echo -e "\n"
+
+echo -e "Enter to Super User mode!\n"
+
+if [[  -z "$PATH_TO_SCRIPT" ]]; then
+    read -p 'Path To Run Script File: ' path
+    export PATH_TO_SCRIPT="$path"
+    sudo sh -c "echo export PATH_TO_SCRIPT=$PATH_TO_SCRIPT >> /home/$(whoami)/.bash_profile"
+fi
+
 export USER_NAME="$uservar"
 
 export USER_PASSWORD="$password"
 
+sudo sh -c "echo export USER_NAME=$USER_NAME >> /home/$(whoami)/.bash_profile"
+
+sudo sh -c "echo export USER_PASSWORD=$USER_PASSWORD >> /home/$(whoami)/.bash_profile"
+
 echo "$USER_NAME"
+
+echo "$PATH_TO_SCRIPT"
+
+sudo sh -c "echo export PATH_TO_SCRIPT=$PATH_TO_SCRIPT >> /home/$(whoami)/.bash_profile"
 
 echo -e "---------------------------------------------";
 
@@ -46,6 +65,8 @@ crontab -e
 
 echo -e "Create Link for run_script.sh file in home directory\n";
 
-sudo ln -s run_script.sh /home/"$(whoami)"/run_script.sh
+# sudo unlink /home/"$(whoami)"/run_script.sh
+
+sudo ln -s "$PATH_TO_SCRIPT"/run_script.sh /home/"$(whoami)"/run_script.sh
 
 echo "Done"

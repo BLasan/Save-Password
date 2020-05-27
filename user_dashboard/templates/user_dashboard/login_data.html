@@ -2,7 +2,7 @@
 {% block main %}
 
 <div class="row" style="padding-top: 50px;">
-  {% if isEmpty %}
+  {% if not isEmpty %}
     <div class="col-md-6">
         <div class="row">
             <div class="col-md-12">
@@ -10,10 +10,12 @@
             </div>
         </div>
     </div>
+  {% else %}
+  <h2 style="color: red;"><b>Empty Data</b></h2>
   {% endif %}
 </div>
 
-{% if isEmpty %}
+{% if not isEmpty %}
 <div class="row" style="padding-top: 50px;">
     <div class="col-md-12">
         <table class="table table-hover login_data">
@@ -32,7 +34,6 @@
                 <td>{{ login.0 }}</td>
                 {% if login.1 != null %}
                 <td>{{ login.1 }}</td>
-                {% endif %}
                 {% else %}
                 <td>None</td>
                 {% endif %}

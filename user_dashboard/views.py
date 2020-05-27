@@ -16,7 +16,7 @@ except:
 # Create your views here.
 
 def index(response):
-    return render(response,"user_dashboard/user_home.html")
+    return render(response,"user_dashboard/user_home.html", {'isCron': False})
 
 def machine_details(response):
     #email = response.session['email']
@@ -68,8 +68,44 @@ def login_data(response):
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
 
+def bookmarks(response):
+    email = "benuraab@gmail.com"
+    try:
+        if(db[email].find({'type': 'bookmarks'}).count()>0):
+            bookmark_data = db[email].find({'type': 'bookmarks'}).max_await_time_ms(5000)
+            isEmpty = False
+        else:
+            print("Empty")
+            bookmark_data = list()
+            bookmark_data.append(list())
+            isEmpty = True
+        return render(response, "user_dashboard/bookmarks.html", {'bookmark_data': bookmark_data[0], 'isEmpty': isEmpty}, status=200)
+    except:
+        print("Not Found!")
+        return render(response, "user_dashboard/error.html", status=500)
+
+def top_sites(response):
+    email = "benuraab@gmail.com"
+    try:
+        if(db[email].find({'type': 'top_sites'}).count()>0):
+            top_sites_data = db[email].find({'type': 'top_sites'}).max_await_time_ms(5000)
+            isEmpty = False
+        else:
+            print("Empty")
+            top_sites_data = list()
+            top_sites_data.append(list())
+            isEmpty = True
+        return render(response, "user_dashboard/top_sites.html", {'top_sites_data': top_sites_data[0], 'isEmpty': isEmpty}, status=200)
+    except:
+        print("Not Found!")
+        return render(response, "user_dashboard/error.html", status=500)
+
+
 def download_zip(response):
     path = "/Download-ZIP/save_password_exe.tar.gz"
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
+
+def crontab_file(response):
+    return render(response, "user_dashboard/user_home.html", {'isCron': True})
 
