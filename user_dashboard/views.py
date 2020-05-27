@@ -105,7 +105,3 @@ def download_zip(response):
     path = "/Download-ZIP/save_password_exe.tar.gz"
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
-
-def crontab_file(response):
-    return render(response, "user_dashboard/user_home.html", {'isCron': True})
-

@@ -57,7 +57,7 @@ class MongoDB:
         history_document = {
             "type": "history",
             "date": date,
-            "url": history_array
+            "history": history_array
         }
         print(self.user_collection.name)
         if(self.user_collection.find({'type': 'history'}).count() == 0):
@@ -69,7 +69,7 @@ class MongoDB:
         top_sites_document = {
             "type": "top_sites",
             "date": date,
-            "url": top_sites_array
+            "top_sites": top_sites_array
         }
         if(self.user_collection.find({'type': 'top_sites'}).count() == 0):
             self.user_collection.insert_one(top_sites_document)

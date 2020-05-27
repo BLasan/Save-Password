@@ -15,7 +15,7 @@
   {% endif %}
 </div>
 
-{% if not isEmpty %}
+{% if not isEmpty and login_data.login|length != 0 %}
 <div class="row" style="padding-top: 50px;">
     <div class="col-md-12">
         <table class="table table-hover login_data">
@@ -29,20 +29,26 @@
             </thead>
             <tbody>
                 {% for login in login_data.login %}
-              <tr>
+              <tr onclick=setCredentials()>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ login.0 }}</td>
-                {% if login.1 != null %}
+                {% if login.1 != '' %}
                 <td>{{ login.1 }}</td>
                 {% else %}
-                <td>None</td>
+                <td>Not Set</td>
                 {% endif %}
-                <td>None</td>
+                <td>Not Set</td>
               </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
+{% else %}
+<div class="row" style="padding-top: 50px;">
+  <div class="col-md-12">
+    <h2 style="color: red;"><b> Empty Login Data ! </b></h2>
+  </div>
 </div>
 {% endif %}
 

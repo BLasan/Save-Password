@@ -21,7 +21,7 @@
   {% endif %}
 </div>
 
-{% if not isEmpty %}
+{% if not isEmpty and history_array.history|length != 0 %}
 <div class="row" style="padding-top: 50px;">
     <div class="col-md-12">
         <table class="table table-hover table-responsive">
@@ -35,7 +35,7 @@
               </tr>
             </thead>
             <tbody>
-                {% for history in history_array.url %}
+                {% for history in history_array.history %}
               <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ history.1 }}</td>
@@ -47,6 +47,12 @@
             </tbody>
         </table>
     </div>
+</div>
+{% else %}
+<div class="row" style="padding-top: 50px;">
+  <div class="col-md-12">
+    <h2 style="color: red;"><b> Empty History !</b></h2>
+  </div>
 </div>
 {% endif %}
 

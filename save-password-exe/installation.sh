@@ -65,7 +65,7 @@ crontab -e
 
 echo -e "Create Link for run_script.sh file in home directory\n";
 
-# sudo unlink /home/"$(whoami)"/run_script.sh
+sudo unlink /home/"$(whoami)"/run_script.sh
 
 sudo ln -s "$PATH_TO_SCRIPT"/run_script.sh /home/"$(whoami)"/run_script.sh
 

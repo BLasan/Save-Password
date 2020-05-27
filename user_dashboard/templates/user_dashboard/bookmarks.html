@@ -1,0 +1,57 @@
+{% extends 'user_dashboard/index.html' %}
+{% block main %}
+
+<div class="row" style="padding-top: 50px;">
+  {% if not isEmpty %}
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <p> <b> Last Tracked : </b> {{ bookmark_data.date }} </p>
+            </div>
+        </div>
+    </div>
+  {% else %}
+  <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 style="color: red;"> Empty Data !</h2>
+        </div>
+    </div>
+</div>
+  {% endif %}
+</div>
+
+{% if not isEmpty and bookmark_data.bookmarks|length != 0 %}
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-12">
+        <table class="table table-hover table-responsive">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">URL</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for bookmarks in bookmark_data.bookmarks %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ bookmarks.name }}</td>
+                <td>{{ bookmarks.url }}</td>
+                <td>{{ bookmarks.date_added }}</td>
+              </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="row" style="padding-top: 50px;">
+  <div class="col-md-12">
+    <h2 style="color: red;"><b> Empty Bookmarks ! </b></h2>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

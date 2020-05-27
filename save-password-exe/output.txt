@@ -1,0 +1,4 @@
+MongoClient(host=['clust1-shard-00-02-tn0nm.mongodb.net:27017', 'clust1-shard-00-00-tn0nm.mongodb.net:27017', 'clust1-shard-00-01-tn0nm.mongodb.net:27017'], document_class=dict, tz_aware=False, connect=True, ssl=True, retrywrites=True, w='majority', authsource='admin', replicaset='clust1-shard-0')
+USER benura
+['benuraab@gmail.com']
+User Exists

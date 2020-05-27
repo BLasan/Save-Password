@@ -25,19 +25,11 @@
 #     echo "Arguments Invalid!" >> ex.txt
 # fi
 
-#!/bin/bash
-
 source /home/"$(whoami)"/.bash_profile
 
 echo "User Name: $USER_NAME";
 
 echo "Password: $USER_PASSWORD";
-
-touch ex.txt
-
-echo "$USER_NAME" >> ex.txt
-echo "$USER_PASSWORD" >> ex.txt
-echo "$PATH_TO_FILE" >> ex.txt
 
 echo "PATH: $PATH_TO_SCRIPT";
 
