@@ -29,11 +29,11 @@ def machine_details(response):
         else:
             machine_data = list()
             machine_data.append(list())
-            isEmpty = False
-        return render(response, "user_dashboard/machine_details.html", {'machine_data': machine_data[0], 'isEmpty': isEmpty})
+            isEmpty = True
+        return render(response, "user_dashboard/machine_details.html", {'machine_data': machine_data[0], 'isEmpty': isEmpty}, status=200)
     except:
         print("Collection not exists!")
-        return render(response, "user_dashboard/error.html")
+        return render(response, "user_dashboard/error.html", status=500)
 
 def history(response):
     #email = response.session['email']
@@ -47,10 +47,10 @@ def history(response):
             history = list()
             history.append(list())
             isEmpty = True
-        return render(response, "user_dashboard/history.html", {'history_array': history[0], 'isEmpty': isEmpty})
+        return render(response, "user_dashboard/history.html", {'history_array': history[0], 'isEmpty': isEmpty}, status=200)
     except:
         print("Not Found!")
-        return render(response, "user_dashboard/error.html")
+        return render(response, "user_dashboard/error.html", status=500)
 
 def login_data(response):
     email = "benuraab@gmail.com"
@@ -62,11 +62,11 @@ def login_data(response):
             print("Empty")
             login_data = list()
             login_data.append(list())
-            isEmpty = False
-        return render(response, "user_dashboard/login_data.html", {'login_data': login_data[0], 'isEmpty': isEmpty})
+            isEmpty = True
+        return render(response, "user_dashboard/login_data.html", {'login_data': login_data[0], 'isEmpty': isEmpty}, status=200)
     except:
         print("Not Found!")
-        return render(response, "user_dashboard/error.html")
+        return render(response, "user_dashboard/error.html", status=500)
 
 def download_zip(response):
     path = "/Download-ZIP/save_password_exe.tar.gz"

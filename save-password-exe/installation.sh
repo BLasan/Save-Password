@@ -1,32 +1,30 @@
 #!/bin/bash
 
-echo -e "Welcome to Save Password Application\n";
+# echo -e "Welcome to Save Password Application\n";
 
-echo -e "----------------------------------------------\n";
+# echo -e "----------------------------------------------\n";
 
-echo -e "Adding Python repository\n";
+# echo -e "Adding Python repository\n";
 
-sudo add-apt-repository ppa:deadsnakes/ppa
+# sudo add-apt-repository ppa:deadsnakes/ppa
 
-echo -e "Updating!";
+# echo -e "Updating!";
 
-sudo apt update
+# sudo apt update
 
-echo -e "Installing python 3.6\n"
+# echo -e "Installing python 3.6\n"
 
-sudo apt install python3.6
+# sudo apt install python3.6
 
-cd save-password
+# cd save-password
 
-echo -e "Installing Requirements\n"
+# echo -e "Installing Requirements\n"
 
-pip3 install -r requirements.txt
+# pip3 install -r requirements.txt
 
 echo -e "Creating Crontab file\n";
 
-user = $(whoami)
-
-echo -e "User Name : $user"
+echo -e "User Name : $(whoami)"
 
 read -p 'User Name: ' uservar
 
@@ -48,6 +46,6 @@ crontab -e
 
 echo -e "Create Link for run_script.sh file in home directory\n";
 
-ln -s run_script.sh /home/run_script.sh
+sudo ln -s run_script.sh /home/"$(whoami)"/run_script.sh
 
 echo "Done"
