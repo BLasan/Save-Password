@@ -18,7 +18,35 @@
               overflow-y: scroll;
               max-height: 600px;
             }
+            .users {
+              table-layout: fixed;
+              width: 100%;
+              white-space: nowrap;
+            }
+            .users td {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            /* Column widths are based on these cells */
+            .row-ID {
+              width: 5%;
+            }
+            .row-url {
+              width: 40%;
+            }
+            .row-name {
+              width: 30%;
+            }
+            .row-password {
+              width: 25%;
+            }
         </style>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
         <script>
           function loadCrontab() {
             document.getElementById('crontab_page').removeAttribute('style');
@@ -29,10 +57,43 @@
             document.getElementById('crontab_page').style = "display: none";
             document.getElementById('installation_page').removeAttribute('style');
           }
+
+          function setCredentials(url, id, email) {
+            document.getElementById('user_name').value = email;
+            document.getElementById('url').value = url;
+          }
+
+          function submitForm(csrf_token) {
+            var user_name = document.getElementById('user_name').value;
+            var user_password = document.getElementById('user_password').value;
+            var _url = document.getElementById('url').value;
+            console.log(_url)
+            $.ajax({type: 'POST',
+              url: '',                            
+              data: {user_name: user_name, user_password: user_password, url: _url},
+              dataType: 'json', 
+              headers: {'X-CSRFToken': csrf_token},        
+              success: function (response) {   
+                console.log(response.status)         
+                if (response.status === 200 ) {
+                  $("#response").removeAttr("style");
+                  document.getElementById('response').innerHTML="<h5 style='color: green'> Success </h5>";
+                  document.getElementById('user_name').value = "";
+                  document.getElementById('user_password').value = "";
+                  document.getElementById('url').value = "";
+                  setTimeout(function(){ $('#response').attr('style', 'display: none');$('#close_modal').click();window.location.reload(1); }, 2000);
+                }
+                else {
+                  $("#response").removeAttr("style");
+                  document.getElementById('response').innerHTML="<h5 style='color: red'> Error Uploading </h5>";
+                }
+              },
+              error: function(err) {
+                console.log(err)
+              }
+            });
+          }
         </script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-dark">

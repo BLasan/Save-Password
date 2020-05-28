@@ -30,7 +30,7 @@ def index(response):
             is_equal = bcrypt.checkpw(password.encode(), user_data['password'])
             if(is_equal):
                 print("Login Success!")
-                requests.session['email'] = email
+                #requests.session['email'] = email
                 return redirect('/dashboard')
             else:
                 print('Credentials Invalid!')

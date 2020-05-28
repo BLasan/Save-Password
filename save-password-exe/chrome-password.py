@@ -179,7 +179,14 @@ def getTopSites(conn):
     print("Process 3")
     freezeDatabse(conn)
     cur = conn.cursor()
-    cur.execute("SELECT url,url_rank,title FROM top_sites")
+    cur.execute("SELECT url,url <!-- <div class="form-group">
+            <label for="exampleInputEmail1">Email</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          </div> -->_rank,title FROM top_sites")
 
     rows = cur.fetchall()
 

@@ -1,4 +1,5 @@
 {% extends 'user_dashboard/index.html' %}
+{% load crispy_forms_tags %}
 {% block main %}
 
 <div class="row" style="padding-top: 50px;">
@@ -18,18 +19,18 @@
 {% if not isEmpty and login_data.login|length != 0 %}
 <div class="row" style="padding-top: 50px;">
     <div class="col-md-12">
-        <table class="table table-hover login_data">
+        <table class="table table-hover login_data users">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">ID</th>
-                <th scope="col">URL</th>
-                <th scope="col">User Name</th>
-                <th scope="col">Current Password</th>
+                <th class="row-1 row-ID">ID</th>
+                <th class="row-2 row-url">URL</th>
+                <th class="row-3 row-name">User Name</th>
+                <th class="row-3 row-password">Current Password</th>
               </tr>
             </thead>
             <tbody>
-                {% for login in login_data.login %}
-              <tr onclick=setCredentials()>
+              {% for login in login_data.login %}
+              <tr id="data_table{{ forloop.counter }}" onclick="setCredentials('{{ login.0 }}', '{{ forloop.counter }}', '{{ login.1 }}')" data-toggle="modal" data-target="#exampleModalLong">
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ login.0 }}</td>
                 {% if login.1 != '' %}
@@ -37,9 +38,13 @@
                 {% else %}
                 <td>Not Set</td>
                 {% endif %}
+                {% if login.2 %}
+                <td>{{ login.2 }}</td>
+                {% else %}
                 <td>Not Set</td>
+                {% endif %}
               </tr>
-                {% endfor %}
+              {% endfor %}
             </tbody>
         </table>
     </div>
@@ -52,4 +57,39 @@
 </div>
 {% endif %}
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Change Credentials</h5>
+        <button type="button" id="close_modal" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="credentials_form">
+          <div id="response" style="display: none;"></div>
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="url">URL</label>
+            <input type="text" class="form-control" id="url" placeholder="URL">
+          </div>
+          <div class="form-group">
+            <label for="user_name">User Name</label>
+            <input type="text" class="form-control" id="user_name" placeholder="User Name">
+          </div>
+          <div class="form-group">
+            <label for="user_password">Password</label>
+            <input type="password" class="form-control" id="user_password" placeholder="Password">
+          </div>
+          <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="submitForm('{{ csrf_token }}')">Add Credentials</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

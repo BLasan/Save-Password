@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'home_view.apps.HomeViewConfig',
-    'user_dashboard.apps.UserDashboardConfig'
+    'user_dashboard.apps.UserDashboardConfig',
+    'static'
 ]
 
 MIDDLEWARE = [
@@ -130,5 +131,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = 'static'
+
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, 'home_view/static/')
+]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

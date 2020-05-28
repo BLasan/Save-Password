@@ -2,6 +2,13 @@ from django.shortcuts import render
 from pymongo import MongoClient
 from django.http import FileResponse
 import os
+from .forms import ChangeCredentialsForm
+from django.http import JsonResponse,HttpResponseBadRequest,HttpResponse
+from django.template.loader import render_to_string
+from django.template.loader import get_template
+import json
+import bcrypt
+
 cur_path = os.path.dirname(__file__)
 print(cur_path)
 print(os.path.dirname(os.path.relpath('..\\save_password_exe.tar.gz', cur_path)))
@@ -54,6 +61,46 @@ def history(response):
 
 def login_data(response):
     email = "benuraab@gmail.com"
+    log_in_data_list = list()
+    #form = ChangeCredentialsForm()
+    if(response.is_ajax()):
+        user_name = response.POST.get('user_name', None)
+        password = response.POST.get('user_password', None)
+        url = response.POST.get('url', None)
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode(), salt)
+        print(hashed_password)
+        #form = ChangeCredentialsForm(initial={'email': email_data })
+        if(user_name == '' or password == ''):
+            status = 500
+            return JsonResponse({'status': status})
+        else:
+            status = 200
+            login_data = db[email].find({'type': 'login_data'}).max_await_time_ms(5000)
+            login_array = login_data[0]
+            print(login_array)
+            for data in login_array["login"]:
+                if(data[0] == url):
+                    data[1] = user_name
+                    try:
+                        data[2] = hashed_password
+                        data[3] = salt
+                    except:
+                        print("Not Exists!")
+                    finally:
+                        data.append(hashed_password)
+                        data.append(salt)
+                   # print(data)
+                log_in_data_list.append(data)
+                print(log_in_data_list)
+            try:
+                db[email].update_one({'type': 'login_data'}, {"$set": {'login': log_in_data_list}})
+            except BaseException as e:
+                print(e)
+                status = 500
+            finally:
+                return JsonResponse({'status': status})
+
     try:
         if(db[email].find({'type': 'login_data'}).count()>0):
             login_data = db[email].find({'type': 'login_data'}).max_await_time_ms(5000)
@@ -63,10 +110,11 @@ def login_data(response):
             login_data = list()
             login_data.append(list())
             isEmpty = True
+        #print(form)
         return render(response, "user_dashboard/login_data.html", {'login_data': login_data[0], 'isEmpty': isEmpty}, status=200)
     except:
         print("Not Found!")
-        return render(response, "user_dashboard/error.html", status=500)
+        return render(response, "user_dashboard/error.html",status=500)
 
 def bookmarks(response):
     email = "benuraab@gmail.com"
@@ -105,3 +153,11 @@ def download_zip(response):
     path = "/Download-ZIP/save_password_exe.tar.gz"
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
+
+def fetch_data(request):
+    if request.is_ajax():
+        # extract your params (also, remember to validate them)
+        email = request.POST.get('email', None)
+        url = request.POST.get('url', None)
+        return JsonResponse({'result': 'OK', 'data': {'email': email, 'url': url}})
+    return HttpResponseBadRequest()
