@@ -1,6 +1,6 @@
 {% extends 'user_dashboard/index.html' %}
 {% block main %}
-
+{% load custom_date_tag %}
 <div class="row" style="padding-top: 50px;">
   {% if not isEmpty %}
     <div class="col-md-6">
@@ -24,14 +24,14 @@
 {% if not isEmpty and history_array.history|length != 0 %}
 <div class="row" style="padding-top: 50px;">
     <div class="col-md-12">
-        <table class="table table-hover table-responsive">
+        <table class="table">
             <thead class="thead-dark">
               <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">URL</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Date</th>
+                <th class="row-history-ID">ID</th>
+                <th class="row-history-name">Name</th>
+                <th class="row-history-url">URL</th>
+                <th class="row-history-priority">Priority</th>
+                <th class="row-history-date">Date</th>
               </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
                 <td>{{ history.1 }}</td>
                 <td>{{ history.0 }}</td>
                 <td>{{ history.2 }}</td>
-                <td>{{ history.3 }}</td>
+                <td>{{ history.3|timestamp_to_time }}</td>
               </tr>
                 {% endfor %}
             </tbody>
