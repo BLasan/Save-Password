@@ -6,3 +6,10 @@ password_pattern = RegexValidator(regex=r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(
 class ChangeCredentialsForm(forms.Form):
     email = forms.EmailField(required=True,help_text='abcd@gmail.com',widget=forms.EmailInput(attrs={'placeholder':'Email'}),label="Email",error_messages={'required':'Please Enter the Email!'})
     password = forms.CharField(required=True,min_length=6,widget=forms.PasswordInput(attrs={'placeholder':'Password'}),label="Password",error_messages={'required':'Please Enter the Password!'})
+
+class ProfileDataForm(forms.Form):
+    user_name = forms.CharField(required=False,widget=forms.TextInput(attrs={'placehoder': 'User Name'}))
+    timer = forms.IntegerField(help_text="Enter the value for auto refreshing timer!")
+
+class FeedBackForm(forms.Form):
+    reason = forms.CharField(required=True,widget=forms.Textarea(attrs={'placeholder': 'Enter Reason for deleting'}),label="Reason",error_messages={'required': 'Please provide the reason for deleting!'})

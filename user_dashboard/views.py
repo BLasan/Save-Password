@@ -2,12 +2,12 @@ from django.shortcuts import render
 from pymongo import MongoClient
 from django.http import FileResponse
 import os
-from .forms import ChangeCredentialsForm
 from django.http import JsonResponse,HttpResponseBadRequest,HttpResponse
 from django.template.loader import render_to_string
 from django.template.loader import get_template
 import json
 import bcrypt
+from .forms import ChangeCredentialsForm,ProfileDataForm,FeedBackForm
 
 cur_path = os.path.dirname(__file__)
 print(cur_path)
@@ -154,10 +154,10 @@ def download_zip(response):
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
 
-def fetch_data(request):
-    if request.is_ajax():
-        # extract your params (also, remember to validate them)
-        email = request.POST.get('email', None)
-        url = request.POST.get('url', None)
-        return JsonResponse({'result': 'OK', 'data': {'email': email, 'url': url}})
-    return HttpResponseBadRequest()
+def settings(response):
+    email = 'benuraab@gmail.com'
+    user_name = 'Benura'
+    form = ChangeCredentialsForm(initial={'email':email})
+    profile_data_form = ProfileDataForm(initial={'user_name': user_name})
+    feedback_form = FeedBackForm()
+    return render(response, "user_dashboard/settings.html", {'form': form, 'profile_form': profile_data_form, 'feedback_form': feedback_form})

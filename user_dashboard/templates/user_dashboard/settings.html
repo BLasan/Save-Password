@@ -1,0 +1,84 @@
+{% extends 'user_dashboard/index.html' %}
+{% load crispy_forms_tags %}
+{% block main %}
+
+<div class="row" style="padding-top: 50px;">
+    <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Change Password</h5>
+              <hr>
+              <form method="POST" style="padding-top: 20px;">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                      <button type="submit" class="btn btn-primary">Change</button>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+              </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="width: 20rem;">
+            <div class="card-body">
+                <h5 class="card-title">Change Settings</h5>
+                <hr>
+                <div class="row" style="padding-top: 20px;">
+                    <div class="col-md-8">
+                        <p>Auto Refresh</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row" style="padding-top: 5px;">
+                    <div class="col-md-12">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ profile_form|crispy }}
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-6">
+                                  <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card" style="width: 20rem;">
+            <div class="card-body">
+                <h5 class="card-title"><b style="color: red;">Delete Profile</b></h5>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ feedback_form|crispy }}
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+                                    <button type="submit" class="btn btn-danger">DELETE PROFILE</button>
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

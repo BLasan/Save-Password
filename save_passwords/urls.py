@@ -28,5 +28,6 @@ urlpatterns = [
     path('login_data/', dashboard_views.login_data, name='login_data'),
     path('download_zip/', dashboard_views.download_zip, name="download_zip"),
     path('bookmarks/', dashboard_views.bookmarks, name="bookmarks"),
-    path('top_sites/', dashboard_views.top_sites, name="top_sites")
+    path('top_sites/', dashboard_views.top_sites, name="top_sites"),
+    path('settings/', dashboard_views.settings, name="settings")
 ]
