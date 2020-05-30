@@ -6,8 +6,25 @@
         <link rel="stylesheet" type="text/css" href="{% static 'home_view/css/background_styles.css' %}" />
         <link rel="stylesheet" href="static/home_view/css/type_writer.css" />
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function() {
+                var path =  window.location.pathname;
+                if(path === '/') {
+                    try {
+                        var error = document.getElementById('error_message').innerText
+                        if(error === 'You are already Logged In!') {
+                            console.log( window.location.pathname)
+                            setTimeout(function() {window.location.href = "http://localhost:8000/dashboard"}, 2000)
+                        }
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+            })
+        </script>
     </head>
     <body>
         <div class="container" id="main" name="main">

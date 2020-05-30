@@ -8,7 +8,7 @@
             <div class="card-body">
               <h3 class="card-title typewriter"><b>Sign Up</b></h3>
               {% if hasError %}
-              <h5 style="color: red;"> Signup Failed. Password Not Matched! </h5>
+              <h5 style="color: red;"> Signup Failed. {{ error_message }}</h5>
               {% endif %}
               <hr>
               <form style="padding-top:15px" method="POST">

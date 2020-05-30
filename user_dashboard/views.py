@@ -30,8 +30,8 @@ def machine_details(response):
     email = 'benuraab@gmail.com'
     print(email)
     try:
-        if(db[email].find({'type': 'machine_details'}).count()>0):  
-            machine_data = db[email].find({'type': 'machine_details'}).max_await_time_ms(5000)
+        if(db.machine_details.find_one({'type': 'machine_details', 'email': email})):  
+            machine_data = db.machine_details.find({'type': 'machine_details', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             machine_data = list()
@@ -46,8 +46,8 @@ def history(response):
     #email = response.session['email']
     email = 'benuraab@gmail.com'
     try:
-        if(db[email].find({'type':'history'}).count()>0):
-            history = db[email].find({'type': 'history'}).max_await_time_ms(5000)
+        if(db.history.find_one({'type':'history', 'email': email})):
+            history = db.history.find({'type': 'history', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             print("Empty")
@@ -76,7 +76,7 @@ def login_data(response):
             return JsonResponse({'status': status})
         else:
             status = 200
-            login_data = db[email].find({'type': 'login_data'}).max_await_time_ms(5000)
+            login_data = db.login_data.find({'type': 'login_data', 'email': email}).max_await_time_ms(5000)
             login_array = login_data[0]
             print(login_array)
             for data in login_array["login"]:
@@ -94,7 +94,7 @@ def login_data(response):
                 log_in_data_list.append(data)
                 print(log_in_data_list)
             try:
-                db[email].update_one({'type': 'login_data'}, {"$set": {'login': log_in_data_list}})
+                db.login_data.update_one({'type': 'login_data', 'email': email}, {"$set": {'login': log_in_data_list}})
             except BaseException as e:
                 print(e)
                 status = 500
@@ -102,8 +102,8 @@ def login_data(response):
                 return JsonResponse({'status': status})
 
     try:
-        if(db[email].find({'type': 'login_data'}).count()>0):
-            login_data = db[email].find({'type': 'login_data'}).max_await_time_ms(5000)
+        if(db.login_data.find_one({'type': 'login_data', 'email': email})):
+            login_data = db[email].find({'type': 'login_data', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             print("Empty")
@@ -119,8 +119,8 @@ def login_data(response):
 def bookmarks(response):
     email = "benuraab@gmail.com"
     try:
-        if(db[email].find({'type': 'bookmarks'}).count()>0):
-            bookmark_data = db[email].find({'type': 'bookmarks'}).max_await_time_ms(5000)
+        if(db.bookmarks.find({'type': 'bookmarks', 'email': email}).count()>0):
+            bookmark_data = db.bookmarks.find({'type': 'bookmarks', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             print("Empty")
@@ -135,8 +135,8 @@ def bookmarks(response):
 def top_sites(response):
     email = "benuraab@gmail.com"
     try:
-        if(db[email].find({'type': 'top_sites'}).count()>0):
-            top_sites_data = db[email].find({'type': 'top_sites'}).max_await_time_ms(5000)
+        if(db.top_sites.find({'type': 'top_sites', 'email': email}).count()>0):
+            top_sites_data = db.top_sites.find({'type': 'top_sites', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             print("Empty")

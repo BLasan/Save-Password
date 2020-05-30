@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user_dashboard/css/history.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'user_dashboard/css/top_sites.css' %}" />
         <style>
             li.borderless {
                 border-top: none;
@@ -20,33 +21,7 @@
               overflow-y: scroll;
               max-height: 600px;
             }
-            .table {
-              table-layout: fixed;
-              width: 100%;
-              white-space: nowrap;
-            }
-            .table td {
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-
-            /* Column widths are based on these cells */
-            .row-ID {
-              width: 5%;
-            }
-            .row-url {
-              width: 40%;
-            }
-            .row-name {
-              width: 30%;
-            }
-            .row-password {
-              width: 25%;
-            }
-            .row-date {
-              width: 25%;
-            }
+            
         </style>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -135,7 +110,7 @@
                       <a class="dropdown-item" href="/settings">Settings</a>
                       <a class="dropdown-item" href="/notifications">Notifications</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="/">Log Out</a>
+                      <a class="dropdown-item" href="/logout">Log Out</a>
                     </div>
                 </li>
               </ul>

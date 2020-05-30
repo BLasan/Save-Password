@@ -1,6 +1,7 @@
 {% extends 'user_dashboard/index.html' %}
 {% block main %}
 
+{% if not isEmpty %}
 <div class="row" style="padding-top: 100px;">
     <div class="col-md-4"></div>
     <div class="col-md-4">
@@ -44,5 +45,10 @@
     </div>
     <div class="col-md-4"></div>
 </div>
+{% else %}
+<div class="row" style="padding-top: 50px;">
+    <h2 style="color: red;" style="padding-top: 100px;">Empty Data</h2>
+</div>
+{% endif %}
 
 {% endblock %}

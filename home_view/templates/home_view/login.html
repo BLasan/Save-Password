@@ -9,6 +9,13 @@
               <h3 class="card-title typewriter"><b>Log In</b></h3>
               <hr>
               <form style="padding-top:15px" method="POST">
+                {% if has_error and error_message %}
+                <div class="row">
+                  <div class="col-md-12">
+                    <h5 style="color: red;" id="error_message">{{ error_message }}</h5>
+                  </div>
+                </div>
+                {% endif %}
                 {% csrf_token %}
                 {{ form|crispy }}
                 <!-- <div class="form-group">

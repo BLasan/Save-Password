@@ -48,7 +48,7 @@
         </table>
     </div>
 </div>
-{% else %}
+{% elif not isEmpty and history_array.history|length == 0 %}
 <div class="row" style="padding-top: 50px;">
   <div class="col-md-12">
     <h2 style="color: red;"><b> Empty History !</b></h2>

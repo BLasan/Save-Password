@@ -1,0 +1,40 @@
+.table {
+    table-layout: fixed;
+    width: 100%;
+    white-space: nowrap;
+    border-collapse: collapse;
+}
+.table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table td:hover {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    z-index: 1;
+    width: auto;
+    background-color: #FFFFCC;
+}
+
+.top_sites {
+    overflow-y: scroll;
+    max-height: 600px;
+}
+
+  /* Column widths are based on these cells */
+.row-top_sites-ID {
+    width: 10%;
+}
+.row-top_sites-url {
+    width: 50%;
+}
+.row-top_sites-rank {
+    width: 10%;
+}
+
+.row-top_sites-title {
+    width: 30%;
+}
