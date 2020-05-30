@@ -11,6 +11,9 @@ import sys
 import datetime
 import bcrypt
 import os, sys
+import gi
+gi.require_version('Notify', '0.7')
+from gi.repository import Notify,GdkPixbuf
 
 fpid = os.fork()
 if fpid!=0:
@@ -26,7 +29,7 @@ user_mac = str(':'.join(['{:02x}'.format((uuid.getnode() >> i) & 0xff) for i in 
 host_name = socket.gethostname()
 user_os = platform.node()
 date = datetime.datetime.now()
-
+user_email = None
 
 class Bookmarks:
     def __init__(self,date,name,url):
@@ -42,16 +45,21 @@ class MongoDB:
         db = self.client.save_password
         self.db = db
 
-    def checkCollectionExists(self, email):
-        print(self.db.list_collection_names())
-        if(email in self.db.list_collection_names()):
-            return True
-        else:
-            self.createDatabaseCollection(email)
-            return False
+    # def checkCollectionExists(self, email):
+    #     history_collection = "history"
+    #     login_collection = "login_data"
+    #     top_sites_collection = "top_sites"
+    #     bookmarks_collection = "bookmarks"
+    #     machine_details_collection = "machine_details"
+    #     print(self.db.list_collection_names())
+    #     if(history_collection in self.db.list_collection_names() or login_collection in self.db.list_collection_names() or top_sites_collection in self.db.list_collection_names() or ):
+    #         return True
+    #     else:
+    #         self.createDatabaseCollection(email)
+    #         return False
 
-    def createDatabaseCollection(self,email):
-        self.user_collection = self.db[email]
+    # def createDatabaseCollection(self,email):
+    #     self.user_collection = self.db[email]
 
     def updateHistory(self,history_array):
         history_document = {
@@ -59,44 +67,62 @@ class MongoDB:
             "date": date,
             "history": history_array
         }
-        print(self.user_collection.name)
-        if(self.user_collection.find({'type': 'history'}).count() == 0):
-            self.user_collection.insert_one(history_document)
+        #print(self.user_collection.name)
+        if(self.db.history.find({'type': 'history','email': user_email}).count() == 0):
+            self.db.history.insert_one(history_document)
         else:
-            self.user_collection.update_one({'type':'history'}, history_document)
+            self.db.history.update_one({'type':'history', 'email': user_email}, {"$set": history_document})
 
     def updateTopSites(self, top_sites_array):
         top_sites_document = {
             "type": "top_sites",
             "date": date,
+            "email": user_email,
             "top_sites": top_sites_array
         }
-        if(self.user_collection.find({'type': 'top_sites'}).count() == 0):
-            self.user_collection.insert_one(top_sites_document)
+        if(self.db.top_sites.find({'type': 'top_sites', 'email': user_email}).count() == 0):
+            self.db.top_sites.insert_one(top_sites_document)
         else:
-            self.user_collection.update_one({'type': 'top_sites'}, top_sites_document)
+            top_sites_document = {
+            "type": "top_sites",
+            "date": date,
+            "top_sites": top_sites_array
+            }
+            self.db.top_sites.update_one({'type': 'top_sites', 'email': user_email}, {"$set": top_sites_document})
 
     def updateLoginData(self, login_data_array):
         login_data_document = {
             "type": "login_data",
             "date": date,
+            "email": user_email,
             "login": login_data_array
         }
-        if(self.user_collection.find({'type': 'login_data'}).count() == 0):
-            self.user_collection.insert_one(login_data_document)
+        if(self.db.login_data.find({'type': 'login_data', "email": user_email}).count() == 0):
+            self.db.login_data.insert_one(login_data_document)
         else:
-            self.user_collection.update_one({'type': 'login_data'}, login_data_document)
+            login_data_document = {
+            "type": "login_data",
+            "date": date,
+            "login": login_data_array
+            }
+            self.db.login_data.update_one({'type': 'login_data', 'email': user_email}, {"$set": login_data_document})
 
     def updateBookmarks(self, bookmarks_array):
         bookmarks_document = {
             "type": "bookmarks",
             "date": date,
+            "email": user_email,
             "bookmarks": bookmarks_array
         }
-        if(self.user_collection.find({'type': 'bookmarks'}).count() == 0):
-            self.user_collection.insert_one(dict(bookmarks_document))
+        if(self.db.bookmarks.find({'type': 'bookmarks'}).count() == 0):
+            self.db.bookmarks.insert_one(dict(bookmarks_document))
         else:
-            self.user_collection.update_one({'type': 'bookmarks'}, bookmarks_document)
+            bookmarks_document = {
+                "type": "bookmarks",
+                "date": date,
+                "bookmarks": bookmarks_array
+            }
+            self.db.bookmarks.update_one({'type': 'bookmarks', "emial": user_email}, {"$set": bookmarks_document})
 
     def updateMachineDetails(self):
         machine_details = {
@@ -105,27 +131,57 @@ class MongoDB:
             "user": user,
             "mac": user_mac,
             "host_name": host_name,
-            "os": user_os
+            "os": user_os,
+            "email": user_email
         }
-        if(self.user_collection.find({'type': 'machine_details'}).count() == 0):
-            self.user_collection.insert_one(machine_details)
+        if(self.db.machine_details.find({'type': 'machine_details', 'email': user_email}).count() == 0):
+            self.db.machine_details.insert_one(machine_details)
         else:
-            self.user_collection.update_one({'type': 'machine_details'}, machine_details)
+            self.db.machine_details.update_one({'type': 'machine_details', 'email': user_email}, {"$set": machine_details})
 
-    def updateUser(self,email,password):
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode(), salt)
-        user_details = {
-            "type": "user_credentials",
-            "user_name": email,
-            "password": hashed_password
-        }
-        if(self.user_collection.find({'type': 'user_credentials'}).count() == 0):
-            self.user_collection.insert_one(user_details)
+    # def updateUser(self,email,password):
+    #     salt = bcrypt.gensalt()
+    #     hashed_password = bcrypt.hashpw(password.encode(), salt)
+    #     user_details = {
+    #         "type": "user_credentials",
+    #         "user_name": email,
+    #         "date": date,
+    #         "password": hashed_password
+    #     }
+    #     if(self.user_collection.find({'type': 'user_credentials'}).count() == 0):
+    #         self.user_collection.insert_one(user_details)
+    #     else:
+    #         self.user_collection.update_one({'type': 'user_credentials'}, user_details)
+
+    def validateUser(self, email, password):
+        doc = self.db.users.find_one({'type': 'user_credentials', 'email': email})
+        # print(type(doc))
+        # print(doc)
+        if(doc is not None):
+            user_doc = self.db.users.find_one({'type': 'user_credentials', 'email': email})
+            if(user_doc):
+                user_doc_data = user_doc
+                print(user_doc_data['password'])
+                user_password = user_doc_data['password']
+                is_correct = bcrypt.checkpw(password.encode(), user_password)
+                if(is_correct):
+                    return False
+                else:
+                    return True
+            else:
+                return True
         else:
-            self.user_collection.update_one({'type': 'user_credentials'}, user_details)
+            return True
 
 mongoDB = MongoDB()
+
+def send_notification():
+    Notify.init("Save Password")
+    notification = Notify.Notification.new("Invalid Credentials!","Please provide correct credentials and re-run.")
+    image = GdkPixbuf.Pixbuf.new_from_file("/home/benura/gcloud.svg")
+    notification.set_icon_from_pixbuf(image)
+    notification.set_image_from_pixbuf(image)
+    notification.show()
 
 def create_connection(db_file):
     conn = ""
@@ -179,20 +235,13 @@ def getTopSites(conn):
     print("Process 3")
     freezeDatabse(conn)
     cur = conn.cursor()
-    cur.execute("SELECT url,url <!-- <div class="form-group">
-            <label for="exampleInputEmail1">Email</label>
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-          </div> -->_rank,title FROM top_sites")
+    cur.execute("SELECT url,url_rank,title FROM top_sites")
 
     rows = cur.fetchall()
 
     for row in rows:
         #print(row)
-        history.append(row)
+        top_sites.append(row)
     try:
        mongoDB.updateTopSites(top_sites)
     except BaseException as e:
@@ -268,22 +317,26 @@ def main(email, password):
                     except:
                         print("Error Updating Machine Details!")
                     finally:
-                        try:
-                            mongoDB.updateUser(email, password)
-                        except:
-                            print("Error Updating User!")
-                        finally:
-                            print("Updated!")
+                        # try:
+                        #     mongoDB.updateUser(email, password)
+                        # except:
+                        #     print("Error Updating User!")
+                        # finally:
+                        print("Updated!")
     
 
 if __name__ == '__main__':
     user = getpass.getuser()
     print("USER",user)
-    if(len(sys.argv) != 3):
-        print("Enter the Email and a Password you provided!")
+    if(len(sys.argv) != 4):
+        print("Invalid Number of arguments!")
     else:
-        isInValid = mongoDB.checkCollectionExists(sys.argv[1])
+        user_email = sys.argv[1]
+        path = sys.argv[3]
+        image_path = path+"/save-password.svg"
+        isInValid = mongoDB.validateUser(sys.argv[1], sys.argv[2])
         if(not isInValid):
             main(sys.argv[1], sys.argv[2])
         else:
-            print('User Exists')
+            send_notification()
+            print('Credentials Not Valid')
