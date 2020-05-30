@@ -1,7 +1,7 @@
 {% extends 'user_dashboard/index.html' %}
 {% load crispy_forms_tags %}
 {% block main %}
-
+{% load custom_password_decrypt %}
 <div class="row" style="padding-top: 50px;">
   {% if not isEmpty %}
     <div class="col-md-6">
@@ -39,7 +39,7 @@
                 <td>Not Set</td>
                 {% endif %}
                 {% if login.2 %}
-                <td>{{ login.2 }}</td>
+                <td>{{ login.2|decrypt:login.3 }}</td>
                 {% else %}
                 <td>Not Set</td>
                 {% endif %}

@@ -8,6 +8,11 @@ from django.template.loader import get_template
 import json
 import bcrypt
 from .forms import ChangeCredentialsForm,ProfileDataForm,FeedBackForm
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import base64
 
 cur_path = os.path.dirname(__file__)
 print(cur_path)
@@ -24,6 +29,8 @@ except:
 
 def index(response):
     return render(response,"user_dashboard/user_home.html", {'isCron': False})
+
+
 
 def machine_details(response):
     #email = response.session['email']
@@ -42,6 +49,8 @@ def machine_details(response):
         print("Collection not exists!")
         return render(response, "user_dashboard/error.html", status=500)
 
+
+
 def history(response):
     #email = response.session['email']
     email = 'benuraab@gmail.com'
@@ -59,6 +68,8 @@ def history(response):
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
 
+
+
 def login_data(response):
     email = "benuraab@gmail.com"
     log_in_data_list = list()
@@ -67,9 +78,21 @@ def login_data(response):
         user_name = response.POST.get('user_name', None)
         password = response.POST.get('user_password', None)
         url = response.POST.get('url', None)
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode(), salt)
-        print(hashed_password)
+        # salt = bcrypt.gensalt()
+        # hashed_password = bcrypt.hashpw(password.encode(), salt)
+        password = password.encode() # Convert to type bytes
+        salt = os.urandom(16) # CHANGE THIS - recommend using a key from os.urandom(16), must be of type bytes
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100000,
+            backend=default_backend()
+        )
+        key = base64.urlsafe_b64encode(kdf.derive(password)) # Can only use kdf once
+        fernet = Fernet(key)
+        encrypt_password = fernet.encrypt(password)
+        print(encrypt_password)
         #form = ChangeCredentialsForm(initial={'email': email_data })
         if(user_name == '' or password == ''):
             status = 500
@@ -78,18 +101,17 @@ def login_data(response):
             status = 200
             login_data = db.login_data.find({'type': 'login_data', 'email': email}).max_await_time_ms(5000)
             login_array = login_data[0]
-            print(login_array)
+            #print(login_array)
             for data in login_array["login"]:
                 if(data[0] == url):
                     data[1] = user_name
                     try:
-                        data[2] = hashed_password
-                        data[3] = salt
+                        data[2] = encrypt_password
+                        data[3] = key
                     except:
                         print("Not Exists!")
-                    finally:
-                        data.append(hashed_password)
-                        data.append(salt)
+                        data.append(encrypt_password)
+                        data.append(key)
                    # print(data)
                 log_in_data_list.append(data)
                 print(log_in_data_list)
@@ -103,7 +125,7 @@ def login_data(response):
 
     try:
         if(db.login_data.find_one({'type': 'login_data', 'email': email})):
-            login_data = db[email].find({'type': 'login_data', 'email': email}).max_await_time_ms(5000)
+            login_data = db.login_data.find({'type': 'login_data', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
         else:
             print("Empty")
@@ -115,6 +137,8 @@ def login_data(response):
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html",status=500)
+
+
 
 def bookmarks(response):
     email = "benuraab@gmail.com"
@@ -131,6 +155,8 @@ def bookmarks(response):
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
+
+
 
 def top_sites(response):
     email = "benuraab@gmail.com"
@@ -149,10 +175,13 @@ def top_sites(response):
         return render(response, "user_dashboard/error.html", status=500)
 
 
+
 def download_zip(response):
     path = "/Download-ZIP/save_password_exe.tar.gz"
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
+
+
 
 def settings(response):
     email = 'benuraab@gmail.com'
