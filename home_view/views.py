@@ -74,29 +74,33 @@ def index(response):
             is_equal = bcrypt.checkpw(password.encode(), user_data['password'])
             if(is_equal):
                 print("Login Success!")
-                response.session['email'] = email
-                response.session['token'] = jwt_token.decode('utf-8')
-                print(users.find_one({'type': 'user_credentials', 'email': email, 'isLoggedIn': False}))
-                if(users.find_one({'type': 'user_credentials', 'email': email, 'isLoggedIn': False})):
-                    try:
-                        users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': True}})
-                        sessions.update_one({'type': 'session_data', 'email': email},{"$set": {'last_login': datetime.today(), 'token': jwt_token.decode('utf-8')}})
-                    except BaseException as e:
-                        print(e)
-                        return redirect('/error')
-                    #requests.Session['email'] = email
-                    url = f"/dashboard/{jwt_token.decode('utf-8')}"
-                    #dashboard_response.setdefault('Authorization', f"Bearer {jwt_token.decode('utf-8')}")
-                    #dashboard_response['Authorization'] = f"Bearer {jwt_token.decode('utf-8')}"
-                    #dashboard_response['Access-Control-Expose-Headers'] = "*"
-                    #print(dashboard_response._headers)
-                    print(url)
-                    return redirect(url)
-                else:
-                    print("Already LoggedIn")
-                    token = jwt_token.decode('utf-8')
-                    has_error = True
-                    error_message = "You are already Logged In!"
+                try:
+                    response.session['email'] = email
+                    response.session['token'] = jwt_token.decode('utf-8')
+                except BaseException as e:
+                    print(e)
+                finally:
+                    print(users.find_one({'type': 'user_credentials', 'email': email, 'isLoggedIn': False}))
+                    if(users.find_one({'type': 'user_credentials', 'email': email, 'isLoggedIn': False})):
+                        try:
+                            users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': True}})
+                            sessions.update_one({'type': 'session_data', 'email': email},{"$set": {'last_login': datetime.today(), 'token': jwt_token.decode('utf-8')}})
+                        except BaseException as e:
+                            print(e)
+                            return redirect('/error')
+                            #requests.Session['email'] = email
+                        url = f"/dashboard/{jwt_token.decode('utf-8')}/"
+                        #dashboard_response.setdefault('Authorization', f"Bearer {jwt_token.decode('utf-8')}")
+                        #dashboard_response['Authorization'] = f"Bearer {jwt_token.decode('utf-8')}"
+                        #dashboard_response['Access-Control-Expose-Headers'] = "*"
+                        #print(dashboard_response._headers)
+                        print(url)
+                        return redirect(url)
+                    else:
+                        print("Already LoggedIn")
+                        token = jwt_token.decode('utf-8')
+                        has_error = True
+                        error_message = "You are already Logged In!"
 
             else:
                 print('Credentials Invalid!')
