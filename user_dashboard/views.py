@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from pymongo import MongoClient
 from django.http import FileResponse
 import os
@@ -7,12 +7,18 @@ from django.template.loader import render_to_string
 from django.template.loader import get_template
 import json
 import bcrypt
-from .forms import ChangeCredentialsForm,ProfileDataForm,FeedBackForm
+from .forms import ChangeCredentialsForm,ProfileDataForm,FeedBackForm,LoginForm
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+import jwt
 import base64
+import requests
+
+JWT_SECRET = 'save_password'
+JWT_ALGORITHM = 'HS256'
+JWT_EXP_DELTA_SECONDS = 3600
 
 cur_path = os.path.dirname(__file__)
 print(cur_path)
@@ -27,34 +33,67 @@ except:
 
 # Create your views here.
 
-def index(response):
-    return render(response,"user_dashboard/user_home.html", {'isCron': False})
-
-
-
-def machine_details(response):
-    #email = response.session['email']
-    email = 'benuraab@gmail.com'
-    print(email)
+def index(response,token):
     try:
-        if(db.machine_details.find_one({'type': 'machine_details', 'email': email})):  
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
+    except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'token': token, 'email': email}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        url = f"/{token}"
+        return redirect(url)
+    return render(response,"user_dashboard/user_home.html", {'isCron': False, 'token': token})
+
+
+
+def machine_details(response,token):
+    #email = response.session['email']
+    #print(token.encode('utf-8'))
+    
+    #print(jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM))
+    try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
+        if(db.machine_details.find_one({'type': 'machine_details', 'email': email})): 
             machine_data = db.machine_details.find({'type': 'machine_details', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
+            print("Test1")
         else:
             machine_data = list()
             machine_data.append(list())
             isEmpty = True
-        return render(response, "user_dashboard/machine_details.html", {'machine_data': machine_data[0], 'isEmpty': isEmpty}, status=200)
-    except:
-        print("Collection not exists!")
-        return render(response, "user_dashboard/error.html", status=500)
+            print("Test2")
+        return render(response, "user_dashboard/machine_details.html", {'machine_data': machine_data[0], 'isEmpty': isEmpty, 'token': token})
+    except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        #url = f"/session_expired/{has_error_param}/{error_message_param}"
+        url = f"/{token}"
+        return redirect(url)
+    except BaseException as e:
+        print(e)
+        return redirect('/error')
 
 
 
-def history(response):
+def history(response, token):
     #email = response.session['email']
-    email = 'benuraab@gmail.com'
     try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
         if(db.history.find_one({'type':'history', 'email': email})):
             history = db.history.find({'type': 'history', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -63,15 +102,46 @@ def history(response):
             history = list()
             history.append(list())
             isEmpty = True
-        return render(response, "user_dashboard/history.html", {'history_array': history[0], 'isEmpty': isEmpty}, status=200)
-    except:
-        print("Not Found!")
-        return render(response, "user_dashboard/error.html", status=500)
+        return render(response, "user_dashboard/history.html", {'history_array': history[0], 'isEmpty': isEmpty, 'token': token})
+    except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        #url = f"/session_expired/{has_error_param}/{error_message_param}"
+        url = f"/{token}"
+        return redirect(url)
+    except BaseException as e:
+        print(e)
+        return redirect('/error')
 
 
 
-def login_data(response):
-    email = "benuraab@gmail.com"
+def login_data(response,token):
+    try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
+    except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        # url = f"/session_expired/{has_error_param}/{error_message_param}"
+        url = f"/{token}"
+        return redirect(url)
+
     log_in_data_list = list()
     #form = ChangeCredentialsForm()
     if(response.is_ajax()):
@@ -133,16 +203,17 @@ def login_data(response):
             login_data.append(list())
             isEmpty = True
         #print(form)
-        return render(response, "user_dashboard/login_data.html", {'login_data': login_data[0], 'isEmpty': isEmpty}, status=200)
+        return render(response, "user_dashboard/login_data.html", {'login_data': login_data[0], 'isEmpty': isEmpty, 'token': token}, status=200)
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html",status=500)
 
 
 
-def bookmarks(response):
-    email = "benuraab@gmail.com"
+def bookmarks(response,token):
     try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
         if(db.bookmarks.find({'type': 'bookmarks', 'email': email}).count()>0):
             bookmark_data = db.bookmarks.find({'type': 'bookmarks', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -151,16 +222,31 @@ def bookmarks(response):
             bookmark_data = list()
             bookmark_data.append(list())
             isEmpty = True
-        return render(response, "user_dashboard/bookmarks.html", {'bookmark_data': bookmark_data[0], 'isEmpty': isEmpty}, status=200)
+        return render(response, "user_dashboard/bookmarks.html", {'bookmark_data': bookmark_data[0], 'isEmpty': isEmpty, 'token': token}, status=200)
+    except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        # url = f"/session_expired/{has_error_param}/{error_message_param}"
+        url = f"/{token}"
+        return redirect(url)
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
 
 
 
-def top_sites(response):
-    email = "benuraab@gmail.com"
+def top_sites(response,token):
     try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
         if(db.top_sites.find({'type': 'top_sites', 'email': email}).count()>0):
             top_sites_data = db.top_sites.find({'type': 'top_sites', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -169,7 +255,21 @@ def top_sites(response):
             top_sites_data = list()
             top_sites_data.append(list())
             isEmpty = True
-        return render(response, "user_dashboard/top_sites.html", {'top_sites_data': top_sites_data[0], 'isEmpty': isEmpty}, status=200)
+        return render(response, "user_dashboard/top_sites.html", {'top_sites_data': top_sites_data[0], 'isEmpty': isEmpty, 'token': token}, status=200)
+    except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        # url = f"/session_expired/{has_error_param}/{error_message_param}"
+        url = f"/{token}"
+        return redirect(url)
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
@@ -183,10 +283,31 @@ def download_zip(response):
 
 
 
-def settings(response):
-    email = 'benuraab@gmail.com'
-    user_name = 'Benura'
+def settings(response,token):
+    try:
+        jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
+        email = jwt_token['user_email']
+        user_name = jwt_token['user_name']
+    except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
+        print('Token Expired!')
+        try:
+            email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
+            db.sessions.update_one({'type': 'session_data', 'email': email, 'token': token}, {"$set": {'isExpired': True}})
+            db.users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': False}})
+        except BaseException as e:
+            print(e)
+            return redirect('/error')
+        # has_error_param = True
+        # error_message_param = "Token Expired!"
+        url = f"/{token}"
+        return redirect(url)
+
     form = ChangeCredentialsForm(initial={'email':email})
     profile_data_form = ProfileDataForm(initial={'user_name': user_name})
     feedback_form = FeedBackForm()
-    return render(response, "user_dashboard/settings.html", {'form': form, 'profile_form': profile_data_form, 'feedback_form': feedback_form})
+
+    return render(response, "user_dashboard/settings.html", {'form': form, 'profile_form': profile_data_form, 'feedback_form': feedback_form, 'token': token})
+
+
+def error(response):
+    return render(response, "user_dashboard/error.html")

@@ -65,7 +65,8 @@ class MongoDB:
         history_document = {
             "type": "history",
             "date": date,
-            "history": history_array
+            "history": history_array,
+            "email": user_email
         }
         #print(self.user_collection.name)
         if(self.db.history.find({'type': 'history','email': user_email}).count() == 0):

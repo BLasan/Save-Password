@@ -4,7 +4,7 @@
         {% load static %}
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{% static 'home_view/css/background_styles.css' %}" />
-        <link rel="stylesheet" href="static/home_view/css/type_writer.css" />
+        <link rel="stylesheet" href="{% static 'home_view/css/type_writer.css' %}" />
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -16,8 +16,34 @@
                     try {
                         var error = document.getElementById('error_message').innerText
                         if(error === 'You are already Logged In!') {
+                            // $.ajax({type: 'POST',
+                            //     url: '',                            
+                            //     data: {user_name: user_name, user_password: user_password},
+                            //     dataType: 'json', 
+                            //     headers: {'X-CSRFToken': csrf_token,'Authorization': `Bearer ${user_token}`},        
+                            //     success: function (response) {   
+                            //         console.log(response.status)         
+                            //         if (response.status === 200 ) {
+                            //             $("#response").removeAttr("style");
+                            //             document.getElementById('response').innerHTML="<h5 style='color: green'> Success </h5>";
+                            //             document.getElementById('user_name').value = "";
+                            //             document.getElementById('user_password').value = "";
+                            //             document.getElementById('url').value = "";
+                            //             setTimeout(function(){ $('#response').attr('style', 'display: none');$('#close_modal').click();window.location.reload(1); }, 2000);
+                            //         }
+                            //         else {
+                            //             $("#response").removeAttr("style");
+                            //             document.getElementById('response').innerHTML="<h5 style='color: red'> Error Uploading </h5>";
+                            //         }
+                            //     },
+                            //     error: function(err) {
+                            //         console.log(err)
+                            //     }
+                            // });
+
                             console.log( window.location.pathname)
-                            setTimeout(function() {window.location.href = "http://localhost:8000/dashboard"}, 2000)
+                            var _token = document.getElementById('_token').value
+                            setTimeout(function() {window.location.href = `http://localhost:8000/dashboard/${_token}`}, 2000)
                         }
                     } catch (error) {
                         console.log(error)
