@@ -31,7 +31,6 @@ urlpatterns = [
     path('top_sites/<token>/', dashboard_views.top_sites, name="top_sites"),
     path('settings/<token>/', dashboard_views.settings, name="settings"),
     path('logout/', views.logout, name="logout"),
-    path('session_expired/<has_error_param>/<error_message_param>/', views.session_expired, name="session_expired"),
+    path('session_expired/<token>/', views.session_expired, name="session_expired"),
     path('error/', dashboard_views.error, name="error"),
-    path('<token_data>/', views.index, name="index")
 ]

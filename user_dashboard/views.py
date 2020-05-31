@@ -46,7 +46,7 @@ def index(response,token):
             print(e)
             return redirect('/error')
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
     return render(response,"user_dashboard/user_home.html", {'isCron': False, 'token': token})
 
 
@@ -82,7 +82,7 @@ def machine_details(response,token):
         # error_message_param = "Token Expired!"
         #url = f"/session_expired/{has_error_param}/{error_message_param}"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
     except BaseException as e:
         print(e)
         return redirect('/error')
@@ -116,7 +116,7 @@ def history(response, token):
         # error_message_param = "Token Expired!"
         #url = f"/session_expired/{has_error_param}/{error_message_param}"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
     except BaseException as e:
         print(e)
         return redirect('/error')
@@ -140,7 +140,7 @@ def login_data(response,token):
         # error_message_param = "Token Expired!"
         # url = f"/session_expired/{has_error_param}/{error_message_param}"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
 
     log_in_data_list = list()
     #form = ChangeCredentialsForm()
@@ -236,7 +236,7 @@ def bookmarks(response,token):
         # error_message_param = "Token Expired!"
         # url = f"/session_expired/{has_error_param}/{error_message_param}"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
@@ -269,7 +269,7 @@ def top_sites(response,token):
         # error_message_param = "Token Expired!"
         # url = f"/session_expired/{has_error_param}/{error_message_param}"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
     except:
         print("Not Found!")
         return render(response, "user_dashboard/error.html", status=500)
@@ -300,7 +300,7 @@ def settings(response,token):
         # has_error_param = True
         # error_message_param = "Token Expired!"
         url = f"/{token}"
-        return redirect(url)
+        return redirect('/')
 
     message = None
     has_error = None
