@@ -1,4 +1,20 @@
-  File "/home/benura/Desktop/save_passwords/save-password-exe/chrome-password.py", line 182
-    cur.execute("SELECT url,url <!-- <div class="form-group">
-                                                    ^
-SyntaxError: invalid syntax
+MongoClient(host=['clust1-shard-00-01-tn0nm.mongodb.net:27017', 'clust1-shard-00-02-tn0nm.mongodb.net:27017', 'clust1-shard-00-00-tn0nm.mongodb.net:27017'], document_class=dict, tz_aware=False, connect=True, ssl=True, retrywrites=True, w='majority', authsource='admin', replicaset='clust1-shard-0')
+USER benura
+b'$2b$12$LLW7SkcHo9zFjkaKWNXWR.4h3heczKucfTCdkr6GgMQZuG.ksDaNS'
+b'Benura@123'
+/home/benura/.config/google-chrome/Default/Login Data
+<sqlite3.Connection object at 0x7fe63f9089d0>
+Get Login Data
+Process 1
+/home/benura/.config/google-chrome/Default/History
+<sqlite3.Connection object at 0x7fe63866c570>
+Get History
+Process 2
+/home/benura/.config/google-chrome/Default/Top Sites
+<sqlite3.Connection object at 0x7fe635386ab0>
+<sqlite3.Connection object at 0x7fe635386ab0>
+Get Top Sites
+Process 3
+Get Bookmarks
+Process 4
+Updated!

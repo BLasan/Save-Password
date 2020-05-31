@@ -164,6 +164,7 @@ class MongoDB:
                 user_doc_data = user_doc
                 print(user_doc_data['password'])
                 user_password = user_doc_data['password']
+                print(password.encode())
                 is_correct = bcrypt.checkpw(password.encode(), user_password)
                 if(is_correct):
                     return False
