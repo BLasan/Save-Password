@@ -9,7 +9,7 @@ class ChangeCredentialsForm(forms.Form):
 
 class ProfileDataForm(forms.Form):
     user_name = forms.CharField(required=False,widget=forms.TextInput(attrs={'placehoder': 'User Name'}))
-    timer = forms.IntegerField(help_text="Enter the value for auto refreshing timer!")
+    timer = forms.CharField(help_text="Enter the value for auto refreshing timer!", disabled=True, widget=forms.NumberInput(attrs={'value': 10}))
 
 class FeedBackForm(forms.Form):
     reason = forms.CharField(required=True,widget=forms.Textarea(attrs={'placeholder': 'Enter Reason for deleting'}),label="Reason",error_messages={'required': 'Please provide the reason for deleting!'})

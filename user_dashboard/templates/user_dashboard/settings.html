@@ -9,6 +9,13 @@
               <h5 class="card-title">Change Password</h5>
               <hr>
               <form method="POST" style="padding-top: 20px;">
+                {% if message is not None and has_error is not None and error_type == 'Credentials' %}
+                    {% if has_error == True %}
+                    <h5 style="color: red;">{{ message }}</h5>
+                    {% else %}
+                    <h5 style="color: green;">{{ message }}</h5>
+                    {% endif %}
+                {% endif %}
                 {% csrf_token %}
                 {{ form|crispy }}
                 <div class="row">
@@ -41,6 +48,13 @@
                 <div class="row" style="padding-top: 5px;">
                     <div class="col-md-12">
                         <form method="POST">
+                            {% if message is not None and has_error is not None and error_type == 'Profile' %}
+                                {% if has_error == True %}
+                                <h5 style="color: red;">{{ message }}</h5>
+                                {% else %}
+                                <h5 style="color: green;">{{ message }}</h5>
+                                {% endif %}
+                            {% endif %}
                             {% csrf_token %}
                             {{ profile_form|crispy }}
                             <div class="row">
@@ -64,6 +78,13 @@
                 <div class="row">
                     <div class="col-md-12">
                         <form method="POST">
+                            {% if message is not None and has_error is not None and error_type == 'Feedback' %}
+                            {% if has_error == True %}
+                            <h5 style="color: red;">{{ message }}</h5>
+                            {% else %}
+                            <h5 style="color: green;">{{ message }}</h5>
+                            {% endif %}
+                            {% endif %}
                             {% csrf_token %}
                             {{ feedback_form|crispy }}
                             <div class="row">

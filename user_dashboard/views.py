@@ -302,11 +302,78 @@ def settings(response,token):
         url = f"/{token}"
         return redirect(url)
 
+    message = None
+    has_error = None
+    error_type = None
+
+    if response.method == "POST":
+        try:
+            form = ChangeCredentialsForm(response.POST)
+            user_email = form['email'].value()
+            password = form['password'].value()
+            print(email,password)
+            if(email is not None or password is not None):
+                salt = bcrypt.gensalt()
+                hashed_password = bcrypt.hashpw(password.encode(), salt)
+                user_data = db.users.find_one_and_update({"type": 'user_credentials', 'email': user_email},{"$set": {'password': hashed_password, 'salt': salt}})
+                if(user_data is not None):
+                    print("Success")
+                    message  = "Success"
+                    has_error = False
+                else:
+                    print("Not Successed")
+                    message = "Not Success"
+                    has_error = True
+                error_type = "Credentials"
+        except BaseException as e:
+            print(e)
+        finally:
+            try:
+                profile_data_form = ProfileDataForm(response.POST)
+                user_name = profile_data_form['user_name'].value()
+                timer = profile_data_form['timer'].value()
+                print(timer)
+                if(timer is not None or user_name is not None):
+                    user_data = db.users.find_one_and_update({'type': 'user_credentials', 'email': email}, {"$set": {"user_name": user_name}})
+                    if(user_data is not None):
+                        print("Success")
+                        message = "Success"
+                        has_error = False
+                    else:
+                        print("Not Success")
+                        message = "Not Success"
+                        has_error = True
+                    error_type = "Profile"
+            except BaseException as e:
+                print(e)
+            finally:
+                try:
+                    feedback_form = FeedBackForm(response.POST)
+                    reason = feedback_form['reason'].value()
+                    print(reason)
+                    if(reason is not None):
+                        if("feedback" in db.list_collection_names()):
+                            user_data_input = db.users.find_one_and_update({'type': 'user_credentials', 'email': email}, {"$set": {'isActive': False}})
+                            user_data = db.feedback.find_one_and_update({"type":"feedback", "email": email}, {"$set": {'reason': reason}})
+                            if(user_data is not None and user_data_input is not None):
+                                print("Success")
+                                has_error = False
+                                message = "Success"
+                            else:
+                                print("Not Success")
+                                has_error = True
+                                message = "Not Success"
+                            error_type = "Feedback"
+                        else:
+                            db.feedback.insert_one({'type': 'feedback', 'email': email, 'reason': reason})
+                except BaseException as e:
+                    print(e)
+
     form = ChangeCredentialsForm(initial={'email':email})
-    profile_data_form = ProfileDataForm(initial={'user_name': user_name})
+    profile_data_form = ProfileDataForm(initial={'user_name': user_name, 'email': email})
     feedback_form = FeedBackForm()
 
-    return render(response, "user_dashboard/settings.html", {'form': form, 'profile_form': profile_data_form, 'feedback_form': feedback_form, 'token': token})
+    return render(response, "user_dashboard/settings.html", {'form': form, 'profile_form': profile_data_form, 'feedback_form': feedback_form, 'token': token, 'message': message, 'has_error': has_error, 'error_type': error_type})
 
 
 def error(response):
