@@ -25,7 +25,7 @@ SECRET_KEY = '6*i+rdg=y!^=_z@#%qt&y08h5yobsxl-k_0m*9)h85gu6x*g2@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://savepassword.herokuapp.com/']
 
 
 # Application definition
@@ -132,6 +132,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
+
 STATIC_URL = '/static/'
 
 STATIC_ROOT = 'static'
@@ -141,4 +143,7 @@ STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'user_dashboard/static/')
 ]
 
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+

