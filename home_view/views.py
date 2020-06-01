@@ -84,7 +84,7 @@ def index(response):
                     if(users.find_one({'type': 'user_credentials', 'email': email, 'isLoggedIn': False})):
                         try:
                             users.update_one({'type': 'user_credentials', 'email': email}, {"$set": {'isLoggedIn': True}})
-                            sessions.update_one({'type': 'session_data', 'email': email},{"$set": {'last_login': datetime.today(), 'token': jwt_token.decode('utf-8')}})
+                            sessions.update_one({'type': 'session_data', 'email': email},{"$set": {'last_login': datetime.today(), 'token': jwt_token.decode('utf-8'), 'isExpired': False}})
                         except BaseException as e:
                             print(e)
                             return redirect('/error')
@@ -94,8 +94,8 @@ def index(response):
                         #dashboard_response['Authorization'] = f"Bearer {jwt_token.decode('utf-8')}"
                         #dashboard_response['Access-Control-Expose-Headers'] = "*"
                         #print(dashboard_response._headers)
-                        print(url)
-                        return redirect(url)
+                        #print(url)
+                        return redirect(str(url))
                     else:
                         print("Already LoggedIn")
                         token = jwt_token.decode('utf-8')
@@ -213,7 +213,7 @@ def session_expired(response, token):
                         print(e)
                         return redirect('/error')
                     url = f"/dashboard/{jwt_token.decode('utf-8')}"
-                    print(url)
+                    #print(url)
                     return redirect(url)
                 else:
                     print("Already LoggedIn")

@@ -33,4 +33,5 @@ urlpatterns = [
     path('logout/', views.logout, name="logout"),
     path('session_expired/<token>/', views.session_expired, name="session_expired"),
     path('error/', dashboard_views.error, name="error"),
+    path('authorization_error/', dashboard_views.authorization_error, name="authorization_error")
 ]

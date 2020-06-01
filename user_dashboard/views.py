@@ -37,6 +37,11 @@ def index(response,token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
         try:
             email = db.sessions.find_one({'type': 'session_data', 'token': token})['email']
@@ -59,6 +64,8 @@ def machine_details(response,token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
         if(db.machine_details.find_one({'type': 'machine_details', 'email': email})): 
             machine_data = db.machine_details.find({'type': 'machine_details', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -69,6 +76,9 @@ def machine_details(response,token):
             isEmpty = True
             print("Test2")
         return render(response, "user_dashboard/machine_details.html", {'machine_data': machine_data[0], 'isEmpty': isEmpty, 'token': token})
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
         print('Token Expired!')
         try:
@@ -94,6 +104,8 @@ def history(response, token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
         if(db.history.find_one({'type':'history', 'email': email})):
             history = db.history.find({'type': 'history', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -103,6 +115,9 @@ def history(response, token):
             history.append(list())
             isEmpty = True
         return render(response, "user_dashboard/history.html", {'history_array': history[0], 'isEmpty': isEmpty, 'token': token})
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignatureError, jwt.exceptions.ExpiredSignature):
         print('Token Expired!')
         try:
@@ -127,6 +142,11 @@ def login_data(response,token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
         print('Token Expired!')
         try:
@@ -214,6 +234,8 @@ def bookmarks(response,token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
         if(db.bookmarks.find({'type': 'bookmarks', 'email': email}).count()>0):
             bookmark_data = db.bookmarks.find({'type': 'bookmarks', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -223,6 +245,9 @@ def bookmarks(response,token):
             bookmark_data.append(list())
             isEmpty = True
         return render(response, "user_dashboard/bookmarks.html", {'bookmark_data': bookmark_data[0], 'isEmpty': isEmpty, 'token': token}, status=200)
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
         print('Token Expired!')
         try:
@@ -247,6 +272,8 @@ def top_sites(response,token):
     try:
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
+        if(not db.users.find_one({'type': 'user_credentials', 'email': email})['isLoggedIn']):
+            return redirect('/authorization_error')
         if(db.top_sites.find({'type': 'top_sites', 'email': email}).count()>0):
             top_sites_data = db.top_sites.find({'type': 'top_sites', 'email': email}).max_await_time_ms(5000)
             isEmpty = False
@@ -256,6 +283,9 @@ def top_sites(response,token):
             top_sites_data.append(list())
             isEmpty = True
         return render(response, "user_dashboard/top_sites.html", {'top_sites_data': top_sites_data[0], 'isEmpty': isEmpty, 'token': token}, status=200)
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
         print('Token Expired!')
         try:
@@ -277,7 +307,7 @@ def top_sites(response,token):
 
 
 def download_zip(response):
-    path = "/Download-ZIP/save_password_exe.tar.gz"
+    path = cur_path+"/save_password_exe.tar.gz"
     zip_file = open(path, 'rb')
     return FileResponse(zip_file)
 
@@ -288,6 +318,9 @@ def settings(response,token):
         jwt_token = jwt.decode(token.encode('utf-8'), JWT_SECRET, algorithms=JWT_ALGORITHM)
         email = jwt_token['user_email']
         user_name = jwt_token['user_name']
+    except jwt.DecodeError as e:
+        print(e)
+        return redirect('/authorization_error')
     except (jwt.exceptions.ExpiredSignature, jwt.exceptions.ExpiredSignatureError):
         print('Token Expired!')
         try:
@@ -378,3 +411,6 @@ def settings(response,token):
 
 def error(response):
     return render(response, "user_dashboard/error.html")
+
+def authorization_error(response):
+    return render(response, "user_dashboard/authorization_error.html")
