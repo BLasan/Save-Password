@@ -52,8 +52,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'save_passwords.urls'
@@ -135,7 +134,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
 
-STATIC_ROOT  =   os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_ROOT  =   os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
 
@@ -145,5 +144,3 @@ STATICFILES_DIR = [
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
