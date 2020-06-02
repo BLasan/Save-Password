@@ -20,7 +20,7 @@ from user_dashboard import views as dashboard_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name="index"),
+    path('/', views.index, name="index"),
     path('signup/',views.signup, name="signup"),
     path('dashboard/<token>/',dashboard_views.index, name="index"),
     path('machine_details/<token>/', dashboard_views.machine_details, name="machine_details"),
