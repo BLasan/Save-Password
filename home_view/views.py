@@ -21,8 +21,9 @@ try:
     users = db['users']
     sessions = db['sessions']
     #email = response.session['email']
-except:
+except BaseException as e:
     print("Connection Error!")
+    print(e)
 
 #Login View
 def index(response):
