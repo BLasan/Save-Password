@@ -118,14 +118,14 @@ def index(response):
 
 # Signup View
 def signup(response):
-    try:
-        client = MongoClient("mongodb+srv://benura:Benura123@clust1-tn0nm.mongodb.net/test?ssl=true&retryWrites=true&w=majority")
-        db = client.save_password
-        users = db['users']
-        sessions = db['sessions']
-        #email = response.session['email']
-    except:
-        print("Connection Error!")
+    # try:
+    #     client = MongoClient("mongodb+srv://benura:Benura123@clust1-tn0nm.mongodb.net/test?ssl=true&retryWrites=true&w=majority")
+    #     db = client.save_password
+    #     users = db['users']
+    #     sessions = db['sessions']
+    #     #email = response.session['email']
+    # except:
+    #     print("Connection Error!")
     if response.method == "POST":
         signupForm = SignupForm(response.POST)
         user_name = signupForm['name'].value()
