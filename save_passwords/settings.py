@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -132,15 +133,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
-
 STATIC_ROOT  =   os.path.join(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
 
 STATICFILES_DIR = [
-    os.path.join(BASE_DIR, 'home_view/static/'),
-    os.path.join(BASE_DIR, 'user_dashboard/static/')
+    os.path.join(BASE_DIR, 'home_view/static'),
+    os.path.join(BASE_DIR, 'user_dashboard/static')
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
