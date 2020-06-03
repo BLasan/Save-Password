@@ -41,10 +41,17 @@ if [ ! -z "$USER_NAME" ] && [[ "$USER_NAME" =~ ^[a-zA-Z0-9]*@[a-zA-Z0-9]*\.[a-zA
     # echo -e "Terminating Chrome to track data";
     # read -p 'Do you wish to terminate ? y or n: ' choice;
     # if [[ "$choice" == "y" ]]; then
-        zenity --question --text="Continue to Track data?"
+        zenity --question --text="Continue to Track data?" --display=:0.0
         killall -q -15 chrome
         echo -e "Run Save Password Script!\n";
-        python3 "$PATH_TO_SCRIPT"/chrome-password.py "$USER_NAME" "$USER_PASSWORD" "$PATH_TO_SCRIPT" 2>&1 | tee "$PATH_TO_SCRIPT"/output.txt
+        eval "export $(egrep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep -u $LOGNAME gnome-session)/environ)"
+        # /usr/bin/notify-send "Invalid User Credentials!"
+        exit_code="$(python3 "$PATH_TO_SCRIPT"/chrome-password.py "$USER_NAME" "$USER_PASSWORD" "$PATH_TO_SCRIPT" 2>&1 | tee "$PATH_TO_SCRIPT"/output.txt)"
+        # echo "Exit Code: $exit_code"
+        # if [[ $exit_code == "Credentials Not Valid" ]]; then
+        #     /usr/bin/notify-send "Invalid User Credentials!" 
+        # fi
+
     # else 
     #     echo -e "Terminating Script!\n"
 else

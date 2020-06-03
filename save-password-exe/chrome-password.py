@@ -40,7 +40,7 @@ class Bookmarks:
 class MongoDB:
     def __init__(self):
         client = MongoClient("mongodb+srv://benura:Benura123@clust1-tn0nm.mongodb.net/test?ssl=true&retryWrites=true&w=majority")
-        print(client)
+        #print(client)
         self.client = client
         db = self.client.save_password
         self.db = db
@@ -162,9 +162,9 @@ class MongoDB:
             user_doc = self.db.users.find_one({'type': 'user_credentials', 'email': email})
             if(user_doc):
                 user_doc_data = user_doc
-                print(user_doc_data['password'])
+                #print(user_doc_data['password'])
                 user_password = user_doc_data['password']
-                print(password.encode())
+                #print(password.encode())
                 is_correct = bcrypt.checkpw(password.encode(), user_password)
                 if(is_correct):
                     return False
@@ -188,7 +188,7 @@ def send_notification():
 def create_connection(db_file):
     conn = ""
     path = '/home/'+user+'/.config/google-chrome/Default/'+db_file
-    print(path)
+    #print(path)
     try:
         conn = sqlite3.connect(path)
         print(conn)
@@ -329,7 +329,7 @@ def main(email, password):
 
 if __name__ == '__main__':
     user = getpass.getuser()
-    print("USER",user)
+    #print("USER",user)
     if(len(sys.argv) != 4):
         print("Invalid Number of arguments!")
     else:
@@ -342,3 +342,4 @@ if __name__ == '__main__':
         else:
             send_notification()
             print('Credentials Not Valid')
+            sys.exit(1)
