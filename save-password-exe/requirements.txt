@@ -90,7 +90,7 @@ opt-einsum==3.2.1
 paramiko==2.7.1
 pathspec==0.5.9
 pexpect==4.2.1
-Pillow==5.1.0
+Pillow==8.2.0
 Pint==0.11
 plac==0.9.6
 preshed==2.0.1
