@@ -87,7 +87,7 @@ oauth==1.0.1
 oauthlib==3.1.0
 olefile==0.45.1
 opt-einsum==3.2.1
-paramiko==2.7.1
+paramiko==2.10.1
 pathspec==0.5.9
 pexpect==4.2.1
 Pillow==5.1.0
