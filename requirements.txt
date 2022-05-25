@@ -12,7 +12,7 @@ gunicorn==20.0.4
 idna==2.7
 jwcrypto==0.7
 pycparser==2.20
-PyJWT==1.7.1
+PyJWT==2.4.0
 pymongo==3.10.1
 pytz==2020.1
 requests==2.20.1
