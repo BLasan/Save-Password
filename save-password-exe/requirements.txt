@@ -82,7 +82,7 @@ mccabe==0.6.1
 murmurhash==1.0.2
 netifaces==0.10.4
 nltk==3.5
-numpy==1.18.4
+numpy==1.22.0
 oauth==1.0.1
 oauthlib==3.1.0
 olefile==0.45.1
