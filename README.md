@@ -1,6 +1,6 @@
 ### About App
 
-- This is a django project which can track your google-chrome data.
+- This is a django project which can track your google-chrome data and prevent unexpected data losses due to OS crashes/Application crashes etc.
 
 - This contains two parts. The ZIP(tar) file contains all the necessary files to track the google-chrome data. You only have to follw the installation guide lines.
 
