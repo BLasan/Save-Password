@@ -19,7 +19,7 @@ Brlapi==0.6.6
 cached-property==1.5.1
 cachetools==4.1.0
 cement==2.8.2
-certifi==2018.1.18
+certifi==2022.12.7
 cffi==1.14.0
 chardet==3.0.4
 ChatterBot==1.0.5
